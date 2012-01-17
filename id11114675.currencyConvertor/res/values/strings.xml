@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="hello">Hello World, CurrencyConvertorActivity!</string>
+    <string name="app_name">CurrencyConvertor</string>
+    <string name="courrecy_covertor">Currency Convertor</string>
+    <string name="add_currency">Add Currency...</string>
+    <string name="last_update">Last Update:Not Update Yet</string>
+    <string name="not_currency">Not Currency</string>
+    <string name="search_hint">Search Currency</string>
+    <string name="equal_symbol">=</string>
+    <string name="base_value">1</string>
+    <string name="update_exchange_rates">Update Exchange Rates</string>
+    <string name="enter_an_amount">Please enter an amount</string>
+    <string name="a_one">1</string>
+    <string name="a_two">2</string>
+    <string name="a_three">3</string>
+    <string name="a_four">4</string>
+    <string name="a_five">5</string>
+    <string name="a_six">6</string>
+    <string name="a_seven">7</string>
+    <string name="a_eight">8</string>
+    <string name="a_nine">9</string>
+    <string name="a_zero">0</string>
+    <string name="a_hundred">00</string>
+    <string name="a_point">.</string>
+    <string name="a_del">DEL</string>
+    <string name="a_ac">AC</string>
+    <string name="a_ok">OK</string>
+</resources>

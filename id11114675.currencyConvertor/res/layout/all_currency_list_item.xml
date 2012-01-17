@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<i11114675.zheng.currencyConvertor.views.AllCurrencyListItem
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	 <RelativeLayout 
+	     android:layout_width="fill_parent"
+	     android:layout_height="fill_parent">
+	     <ImageView 
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:layout_marginRight="10px"
+	         android:id="@+id/acl_currency_flag"
+	         />
+	     <TextView 
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:layout_toRightOf="@+id/acl_currency_flag"
+	         android:textSize="8pt"
+	         android:id="@+id/acl_currency_code"
+	         />
+	     <TextView 
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:layout_below="@id/acl_currency_code"
+	         android:layout_marginLeft="58px"
+	         android:id="@+id/acl_currency_name"
+	         />
+	</RelativeLayout>
+</i11114675.zheng.currencyConvertor.views.AllCurrencyListItem>
+    
+

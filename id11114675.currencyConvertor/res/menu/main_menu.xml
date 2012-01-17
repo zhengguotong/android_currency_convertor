@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  <item
+      android:icon="@drawable/refresh"
+      android:title="@string/update_exchange_rates"
+      android:id ="@+id/update_rate"
+      />  
+</menu>

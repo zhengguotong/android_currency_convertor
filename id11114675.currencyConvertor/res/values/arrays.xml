@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="flags">
+        <item>@drawable/dzd</item>
+        <item>@drawable/aud</item>
+        <item>@drawable/cny</item>
+        <item>@drawable/eur</item>
+        <item>@drawable/hkd</item>
+        <item>@drawable/inr</item>
+        <item>@drawable/jpy</item>
+        <item>@drawable/krw</item>
+        <item>@drawable/nzd</item>
+        <item>@drawable/twd</item>
+        <item>@drawable/usd</item>
+        <item>@drawable/brl</item>
+        <item>@drawable/gbp</item>
+    </array>
+    <array name="currecny_codes">
+        <item>DZD</item>
+        <item>AUD</item>
+        <item>CNY</item>
+        <item>EUR</item>
+        <item>HKD</item>
+        <item>INR</item>
+        <item>JPY</item>
+        <item>KRW</item>
+        <item>NZD</item>
+        <item>TWD</item>
+        <item>USD</item>
+        <item>BRL</item>
+        <item>GBP</item>
+    </array> 
+    <array name="currecny_names">
+        <item>Algerian Dinar</item>
+        <item>Australian Dollar</item>
+        <item>Chinese Yuan</item>
+        <item>Euro</item>
+        <item>Hong Kong Dollar</item>
+        <item>Indian Rupee</item>
+        <item>Japanese Yen</item>
+        <item>Korean Won</item>
+        <item>New Zealand Dollar</item>
+        <item>Taiwan Dollar</item>
+        <item>U.S. Dollar</item>
+        <item>Brazilian Real</item>
+        <item>British Pound</item>
+    </array> 
+    <string-array name="clicked_currency_dialog">
+        <item>Change Currency</item>
+        <item>Remove this Currency</item>
+        <item>Move up</item>
+        <item>Move down</item>
+    </string-array>
+    <string-array name="base_currency_dialog">
+        <item>Enter an amount</item>
+        <item>Change base currency</item>
+    </string-array>
+</resources>

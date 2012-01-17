@@ -1,0 +1,282 @@
+package i11114675.zheng.currencyConvertor;
+
+import i11114675.zheng.currencyConvertor.currency.CurrencyRate;
+import i11114675.zheng.currencyConvertor.currency.HistoricalRates;
+import i11114675.zheng.currencyConvertor.utils.FlipperAnimation;
+import i11114675.zheng.currencyConvertor.views.GraphView;
+import i11114675.zheng.currencyConvertor.views.GraphView.GraphViewData;
+import i11114675.zheng.currencyConvertor.views.GraphView.GraphViewSeries;
+import i11114675.zheng.currencyConvertor.views.LineGraphView;
+import i11114675.zheng.currencyConvertor.webServices.HistoricalCurrencyRate;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+import android.widget.ViewFlipper;
+
+public class LineChartActivity extends Activity {
+	private static final String DATE_FORMAT = "yyyy-MM-dd";
+	private static final int NUMBEROFDAYS = 7;
+	private static final int SUBSTRACTDAYS = -6;
+	private String DISPLAY_DATE_FOMRAT = "d MMM";
+	private ViewFlipper currencyFlipper;
+	private CurrencyApplication app;
+	private float oldTouchValue;
+	private ArrayList<CurrencyRate> rates;
+	private ArrayList<HistoricalRates> historicalRates = new ArrayList<HistoricalRates>();
+	private LoadHistoricalTask loadHistoricalTask;
+	private String startDate = "";
+	private String endDate = "";
+
+	@Override
+	protected void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.chart);
+
+		app = (CurrencyApplication) getApplication();
+		rates = app.getCurrencyRates();
+		setupDate();
+		setupFlipper();
+	}
+    
+	/**
+	 * sets up start date and end date for historical data
+	 */
+	private void setupDate(){	
+		SimpleDateFormat simpleDateFormat = new SimpleDateFormat(DATE_FORMAT);
+		// sents endDate to current date
+		endDate = simpleDateFormat.format(new Date());
+		startDate = simpleDateFormat.format(getAddedDate(endDate,
+				SUBSTRACTDAYS, simpleDateFormat)); // get the startdate
+	} 
+	
+	/**
+	 * sets flippers
+	 */
+	private void setupFlipper() {
+		currencyFlipper = (ViewFlipper) findViewById(R.id.c_curreny_flipper);
+		loadHistoricalTask  = new LoadHistoricalTask();
+		loadHistoricalTask.execute();
+	}
+    
+	/**
+	 * sets flipper view 
+	 * @param view  
+	 * @param rate
+	 * @param data
+	 */
+	private void addCurrencyListItem(View view, CurrencyRate rate,GraphViewData[] data ) {
+		// find flipper view
+		ImageView baseCurrencyFlag = (ImageView) view
+				.findViewById(R.id.lcf_base_currency_flag);
+		TextView baseCurrencyCode = (TextView) view
+				.findViewById(R.id.lcf_base_currency_code);
+		TextView baseCurrencyAmount = (TextView) view
+				.findViewById(R.id.lcf_base_amount);
+		ImageView toCurrencyFlag = (ImageView) view
+				.findViewById(R.id.lcf_to_currency_flag);
+		TextView toCurrencyCode = (TextView) view
+				.findViewById(R.id.lcf_to_currency_code);
+		TextView toAmount = (TextView) view.findViewById(R.id.lcf_to_amount);
+
+		// binds text or picture to the flipper views
+		baseCurrencyFlag
+				.setBackgroundDrawable(rate.getFromCurrency().getFlag());
+		baseCurrencyCode.setText(rate.getFromCurrency().getCurrencyCode());
+		baseCurrencyAmount.setText("" + app.getBaseAmount());
+		toCurrencyFlag.setBackgroundDrawable(rate.getToCurrency().getFlag());
+		toCurrencyCode.setText(rate.getToCurrency().getCurrencyCode());
+		toAmount.setText(rate.getToAmount());
+		//draws line chart graphic view 
+		drawTrendChart(view,rate,data);
+	}
+	
+	/**
+	 * draws line trend chart 
+	 * @param view
+	 * @param rate
+	 * @param data
+	 */
+	private void drawTrendChart(View view,CurrencyRate rate,GraphViewData[] data){
+		 getDateLable();
+		//creates new historical currency data graphic view
+		GraphView graphView = new LineGraphView(this ,rate.getFullCode());
+		//gets historical currency rate data
+		GraphViewSeries rateSeries = new GraphViewSeries(data);
+		//sets horizontal lable for this graphic view 
+		graphView.setHorizontalLabels(getDateLable());
+		graphView.addSeries(rateSeries); 
+
+		LinearLayout layout = (LinearLayout) view.findViewById(R.id.lcf_trend_chart);
+		layout.addView(graphView);//add this graphview to the layout 
+	}
+	
+	/**
+	 * gets historical currency rate form this currencyrate
+	 * @param rate
+	 * @return
+	 */
+	private GraphViewData[] getHistoricalRate(CurrencyRate rate){
+		//new graphic view date 
+		GraphViewData[] historialDatas = new GraphViewData[NUMBEROFDAYS];
+		try{
+			//gets historical data from web service and split the result  
+			String results[] = new String(HistoricalCurrencyRate
+					.getHistroiaclStream(startDate, endDate, 
+							rate.getFromCurrency().getCurrencyCode(), 
+							rate.getToCurrency().getCurrencyCode())).split("\\s+");
+			if(null != results){
+				int xValue = 0; 
+				//stores results into (date, rate) format
+				for(int i=1; i<results.length; i +=2){
+					historialDatas[xValue] = new GraphViewData(xValue, Double.parseDouble(results[i]));
+					xValue++;
+				}
+				return historialDatas;
+			}
+		}catch(Exception e){
+			return null;
+		}	
+		return null;
+	}
+	
+	/**
+	 * get last seven days label 
+	 * @return
+	 */
+	private String[] getDateLable(){
+		SimpleDateFormat simpleDateFormat =  new SimpleDateFormat(DISPLAY_DATE_FOMRAT);
+		String[] dates = new String[NUMBEROFDAYS];
+		
+		//the end date is today 
+		dates[NUMBEROFDAYS - 1] = simpleDateFormat.format(new Date());
+	    
+		
+		int substractDays = -1;
+		//gets last six date label
+		for(int i = 5; i>= 0; i--){
+			dates[i] = simpleDateFormat.format(getAddedDate(dates[NUMBEROFDAYS - 1],
+					substractDays, simpleDateFormat));
+			substractDays--;
+		}
+		return dates;
+	}
+	
+	/**
+	 * get added date 
+	 * @param date
+	 * @param days
+	 * @param simpleDateFormat
+	 * @return
+	 */
+	private Date getAddedDate(String date, int days, SimpleDateFormat simpleDateFormat){
+		try {
+			Calendar calendar = Calendar.getInstance();
+			calendar.setTime(simpleDateFormat.parse(date));
+			calendar.add(Calendar.DATE, days);  // number of days to add
+			return calendar.getTime();
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
+	@Override
+	public boolean onTouchEvent(MotionEvent touchevent) {
+		switch (touchevent.getAction()) {
+		case MotionEvent.ACTION_DOWN: {
+			oldTouchValue = touchevent.getX();
+			break;
+		}
+		case MotionEvent.ACTION_UP: {
+			float currentX = touchevent.getX();
+			if (oldTouchValue < currentX) {
+				currencyFlipper.setInAnimation(FlipperAnimation
+						.inFromLeftAnimation());
+				currencyFlipper.setOutAnimation(FlipperAnimation
+						.outToRightAnimation());
+				currencyFlipper.showNext();
+			}
+			if (oldTouchValue > currentX) {
+				currencyFlipper.setInAnimation(FlipperAnimation
+						.inFromRightAnimation());
+				currencyFlipper.setOutAnimation(FlipperAnimation
+						.outToLeftAnimation());
+				currencyFlipper.showPrevious();
+			}
+			break;
+		   }
+		}
+		return false;
+	}
+	
+	/**
+	 * Finish line chart activity
+	 * 
+	 * @param target
+	 *            list view button
+	 */
+	public void listViewHandler(View target) {
+		finish();
+	}
+	
+	/**
+	 * inner class: load historical rate on the background 
+	 * @author zhengguotong
+	 *
+	 */
+	private class LoadHistoricalTask extends AsyncTask<Void, Integer, Long> {
+        private ProgressDialog progressDialog;
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			setuUpProgress(); //initialize process dialog 
+		}
+
+		@Override
+		protected Long doInBackground(Void... params) {
+			try {
+				//gets historical rate from web service
+				for (CurrencyRate rate : rates) {
+					historicalRates.add(new HistoricalRates(getHistoricalRate(rate),rate));
+				}
+			}catch(Exception e){
+				cancel(true);
+	        }
+			return null;
+		}
+		
+		@Override
+		protected void onPostExecute(Long result) {
+			//setups slipper for each currency rate 
+			for(HistoricalRates historicalData: historicalRates){
+				View view = getLayoutInflater().inflate(
+						R.layout.line_chart_flipper, null); //gets flipper view 
+				addCurrencyListItem(view, historicalData.getRate(),historicalData.getHistoricalRate());
+				currencyFlipper.addView(view);
+			}
+			progressDialog.dismiss();
+	    }
+		
+		/**
+		 * sets progress dialog
+		 */
+        private void setuUpProgress(){
+        	progressDialog = new ProgressDialog(LineChartActivity.this);
+        	progressDialog.setTitle("Loading");
+        	progressDialog.setMessage("Loading historica rates from server");
+            progressDialog.show();
+        }
+    }
+}

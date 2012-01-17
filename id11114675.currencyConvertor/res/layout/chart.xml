@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:background="@color/grey"
+	    android:layout_marginBottom="10px"
+	    android:id="@+id/c_title_group"
+	    >
+	    <TextView  
+	         android:layout_height="wrap_content" 
+	         android:layout_width="wrap_content" 
+	         android:text="@string/courrecy_covertor" 
+	         android:layout_centerVertical="true"
+	         android:layout_centerHorizontal="true"
+	        />
+	     <ImageButton
+	         android:layout_width="wrap_content"
+	         android:layout_height="wrap_content"
+	         android:src="@drawable/chart"
+	         android:layout_alignParentRight="true"
+	         android:clickable="false"
+	         />
+	     <ImageButton 
+	         android:layout_height="wrap_content" 
+             android:src="@drawable/list_view" 
+             android:layout_width="wrap_content" 
+             android:layout_alignParentTop="true" 
+             android:layout_alignParentLeft="true"
+             android:onClick="listViewHandler"
+              />         
+	</RelativeLayout>
+		<ViewFlipper
+		    android:layout_width="wrap_content"
+		    android:layout_height="fill_parent"
+		    android:layout_below="@id/c_title_group"
+		    android:id="@+id/c_curreny_flipper"
+	        />
+</RelativeLayout>
